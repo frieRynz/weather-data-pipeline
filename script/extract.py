@@ -1,6 +1,7 @@
 import requests 
 import json
 import os
+import time
 
 weather_url = f"https://api.open-meteo.com/v1/forecast"
 
@@ -22,6 +23,12 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 # 2. Go up one level to the project root, then point to data/raw_data
 raw_data_dir = os.path.abspath(os.path.join(script_dir, "..", "data", "raw_data"))
 
+start_time = time.time()
+
+successful_cities = 0
+failed_cities = []
+total_rows_fetched = 0
+
 for city, coordinates in location.items():
     latitude = coordinates[0]
     longitude = coordinates[1]
@@ -30,13 +37,30 @@ for city, coordinates in location.items():
     city_params["latitude"] = latitude
     city_params["longitude"] = longitude    
     
-    response = requests.get(weather_url, params=city_params)
-    
-    if response.status_code == 200: 
+    try:
+        response = requests.get(weather_url, params=city_params, timeout=10)
+        
+        response.raise_for_status()
+        
         weather_data = response.json()
         
+        successful_cities+=1
+        total_rows_fetched+= len(weather_data["hourly"]["time"])
+                
         os.makedirs(raw_data_dir, exist_ok=True)
         file_path = os.path.join(raw_data_dir, f"{city}_7days_hourly_weather.json")
-        
+                
         with open(file_path, 'w') as f:
             json.dump(weather_data, f, indent=2)
+            
+    except Exception as e:
+        print(f"Failed to fetch {city}'s weather data. Error: {e}")
+        failed_cities.append(city)
+        
+        
+duration = time.time() - start_time
+
+print(f"Extraction Complete in {round(duration, 2)} seconds")
+print(f"{successful_cities} weather data have been extracted from Open-meteo")
+print(f"{failed_cities} city(s) failed to be extracted")
+print(f"{total_rows_fetched} rows are fecthed in total")

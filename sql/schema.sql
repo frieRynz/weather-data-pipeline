@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS city(
     city_id SERIAL PRIMARY KEY,
     city_name VARCHAR(50) UNIQUE NOT NULL,
     latitude NUMERIC NOT NULL,
-    longtitude NUMERIC NOT NULL,
+    longitude NUMERIC NOT NULL,
     timezone VARCHAR(50)
 );
 

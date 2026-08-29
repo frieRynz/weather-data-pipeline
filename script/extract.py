@@ -3,6 +3,10 @@ import json
 import os
 import time
 
+from logger import setup_logger
+
+logger = setup_logger("extract")
+
 weather_url = f"https://api.open-meteo.com/v1/forecast"
 
 location = {'Bangkok': [13.7540,100.5014],
@@ -15,13 +19,12 @@ params = {
     "hourly": ["temperature_2m", "precipitation_probability"],
 }
 
-# 1. Get the absolute path of the folder containing extract.py (the 'script' folder)
-script_dir = os.path.dirname(os.path.abspath(__file__))
+script_dir = os.path.dirname(os.path.abspath(__file__)) # 1. Get absolute path of the folder containing extract.py 
 
-# 2. Go up one level to the project root, then point to data/raw_data
-raw_data_dir = os.path.abspath(os.path.join(script_dir, "..", "data", "raw_data"))
+raw_data_dir = os.path.abspath(os.path.join(script_dir, "..", "data", "raw_data")) 
 
 start_time = time.time()
+logger.info("Extraction started")
 
 successful_cities = 0
 failed_cities = []
@@ -51,14 +54,21 @@ for city, coordinates in location.items():
         with open(file_path, 'w') as f:
             json.dump(weather_data, f, indent=2)
             
+        logger.info(f"Successfully fetched and saved {city} ({len(weather_data['hourly']['time'])} rows)")
+        
     except Exception as e:
-        print(f"Failed to fetch {city}'s weather data. Error: {e}")
+        logger.error(f"Failed to fetch {city}'s weather data. Error: {e}")
         failed_cities.append(city)
         
         
 duration = time.time() - start_time
 
-print(f"Extraction Complete in {round(duration, 2)} seconds")
-print(f"{successful_cities} weather data have been extracted from Open-meteo")
-print(f"{failed_cities} city(s) failed to be extracted")
-print(f"{total_rows_fetched} rows are fecthed in total")
+logger.info(f"Extraction Complete in {round(duration, 2)} seconds")
+logger.info(f"{successful_cities} weather data have been extracted from Open-meteo")
+
+if failed_cities:
+    logger.error(f"{failed_cities} city(s) failed to be extracted")
+    
+logger.info(f"Total rows fetched: {total_rows_fetched}")
+print(f"Extraction complete: {successful_cities} cities, {total_rows_fetched} rows "
+      f"({len(failed_cities)} failed). See logs/pipeline.log for details.")

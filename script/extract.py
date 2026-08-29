@@ -13,8 +13,6 @@ location = {'Bangkok': [13.7540,100.5014],
 
 params = {
     "hourly": ["temperature_2m", "precipitation_probability"],
-    "latitude" : 13.7540,
-    "longitude" : 100.5014
 }
 
 # 1. Get the absolute path of the folder containing extract.py (the 'script' folder)

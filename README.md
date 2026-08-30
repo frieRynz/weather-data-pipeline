@@ -12,7 +12,7 @@ After I had done observing on the payload, I tried to simulate the data flow for
 ## 2) How you made the pipeline idempotent
 I made the pipeline idempotent by adding `ON CONFLICT DO UPDATE` to the insertion statement to ensure that if the inserted records happen to share the same set of primary key values to the existing ones inside the database, pipeline has to update that existing records' value(s) instead of adding new records to the database. 
 
-## 3) What data issues you hit from the API (timezones, nulls, units, gaps) and how you handled them
+## 3) What data issues you hit from the API and how you handled them
 After completing the pipeline scripts, loading them to the database, and connecting those data to the Streamlit app, I discovered something unusual about the displayed hourly temperatures. The comparison metric is 7 hours shifted from the actual Thai user perspective. For example, the forecasted temperature, from the JSON payload, at midnight on the 29th is 27.8°C, which is actually the temperature at 7 AM Bangkok time. This was due to the default timezone Open-meteo provides, GMT, when the timezone parameter is not configured in the API request. Knowing that, I quickly added the time zone parameter to the extract.py, truncated the forecast table since all of its timestamps were in GMT, and re-ran the whole pipeline again to force the data timestamps to match with the Thai timezone.  
 
 ## 4) What you would change if this had to run every hour, all year
@@ -37,7 +37,7 @@ __2. A rainy spell clearly breaks the heat in Hat Yai__:
   </tr>
 </table>
 
-## 6) Which parts you used AI tools for — using them is fine and costs you nothing, but you should be able to explain every line of code you submit
+## 6) Which parts you used AI tools for
 I used AI to help me complete this assignment in almost every part. Let me break them down how: 
 1. __Ingestion script__: I used AI to help me validate my pipeline workflow that I planned, debug ETL scripts errors, and write the logger helper script. 
 2. __SQL__ : I used AI  to validate whether the sql queries I wrote really satisfy the SQL questions or not. 

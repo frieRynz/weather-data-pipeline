@@ -48,7 +48,7 @@ WITH daily_avgTemp AS (
 SELECT city_name,
        day,
        avg_temp AS today_average_temp,
-       abs(avg_temp - LAG(avg_temp,1) OVER (PARTITION BY city_name ORDER BY day))
+       avg_temp - LAG(avg_temp,1) OVER (PARTITION BY city_name ORDER BY day)
            AS temp_diff_from_yesterday
 FROM daily_avgTemp
 ORDER BY city_name, day;

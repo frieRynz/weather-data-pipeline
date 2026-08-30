@@ -3,6 +3,60 @@
   <img src="img\Screenshot 2026-08-30 225620.png" alt="Weather pipeline dashboard" width="400" height = "550">
 </p>
 
+## Setup & Running the Pipeline
+
+### Prerequisites
+- Python 3.10+
+- Docker (for the PostgreSQL database)
+
+### 1) Start the PostgreSQL database
+```bash
+docker-compose up -d db
+```
+The database listens on port **5433** (mapped from 5432) with persistent storage in a docker volume. Adminer (DB UI) is also available at http://localhost:8080 if you start the `adminer` service too.
+
+### 2) Create your own credentials
+Credentials are **not** committed to this repo — you need to create the two config files yourself:
+
+**a. Database connection** — create a `.env` file in the project root (used by the pipeline scripts and `docker-compose.yml`):
+```env
+# values used by docker-compose.yml to bootstrap the database
+POSTGRES_USER=your_db_user
+POSTGRES_PASSWORD=your_db_password
+POSTGRES_DB=weather_db
+
+# values used by the pipeline scripts (script/load.py) to connect
+DB_HOST=localhost
+DB_PORT=5433
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=weather_db
+```
+
+**b. Streamlit app** — copy `app/.streamlit/secrets.toml.example` to `app/.streamlit/secrets.toml` and fill in the same database credentials (this file is gitignored, so it must be created manually).
+
+### 3) Create the schema
+Apply `sql/schema.sql` once (via Adminer at http://localhost:8080) OR:
+```bash
+docker exec -i weather_postgres psql -U your_db_user -d weather_db < sql/schema.sql
+```
+
+### 4) Install dependencies & run the pipeline
+```bash
+python -m venv venv
+venv\Scripts\activate          # Windows (source venv/bin/activate on Linux/macOS)
+pip install -r requirements.txt
+
+python script/run_pipeline.py  # runs extract -> transform -> load
+```
+The pipeline is **idempotent** — run it as many times as you like; existing rows are updated via `ON CONFLICT DO UPDATE`, never duplicated. Each run's progress and row counts are logged to `logs/pipeline.log`.
+
+### 5) Run the dashboard
+```bash
+streamlit run app/main.py
+```
+
+
 ## 1) How you designed the schema and why (why you split or did not split tables, what keys you chose)
 Before I started designing the schema, I first looked at what are being asked for in the SQL part of this assignment, which are temperature and chance of having rain. 
 Knowing that, I went researching on open-meteo API document to find out how to get those information. After I have found it, I started to call for API request to see the raw JSON payload and found that the payload offers both city demographic; coordinates and time zone, and weather forecasts data; timestamp, temperature, and precipitation probability. 
@@ -13,7 +67,7 @@ After I had done observing on the payload, I tried to simulate the data flow for
 I made the pipeline idempotent by adding `ON CONFLICT DO UPDATE` to the insertion statement to ensure that if the inserted records happen to share the same set of primary key values to the existing ones inside the database, pipeline has to update that existing records' value(s) instead of adding new records to the database. 
 
 ## 3) What data issues you hit from the API and how you handled them
-After completing the pipeline scripts, loading them to the database, and connecting those data to the Streamlit app, I discovered something unusual about the displayed hourly temperatures. The comparison metric is 7 hours shifted from the actual Thai user perspective. For example, the forecasted temperature, from the JSON payload, at midnight on the 29th is 27.8°C, which is actually the temperature at 7 AM Bangkok time. This was due to the default timezone Open-meteo provides, GMT, when the timezone parameter is not configured in the API request. Knowing that, I quickly added the time zone parameter to the extract.py, truncated the forecast table since all of its timestamps were in GMT, and re-ran the whole pipeline again to force the data timestamps to match with the Thai timezone.  
+After completing the pipeline scripts, loading them to the database, and connecting those data to the Streamlit app, I discovered something unusual about the displayed hourly temperatures. The comparison metric is 7 hours shifted from the actual Thai user perspective. For example, the forecasted temperature, from the JSON payload, at midnight on the 29th is 27.8°C, which is actually the temperature at 7 AM Bangkok time. This was due to the default timezone Open-meteo provides, GMT, when the timezone parameter is not configured in the API request. Knowing that, I quickly added the time zone parameter to the extract.py, truncated the forecast table since all of its timestamps were in GMT, and re-ran the whole pipeline again to force the data timestamps to match with the Thai timezone. Additionally, since the `forecast` table uses `NOT NULL` constraints on the weather columns, the transform stage drops any hourly row containing a null temperature or precipitation probability (logged as a warning) so that a single bad value from the API can never crash the load or leave partial data behind.  
 
 ## 4) What you would change if this had to run every hour, all year
 If this pipeline had to run 24/7 for a year, the very first thing I would like to change is the pipeline execution's method from manual to automated by employing the orchestrator tools like Apache Airflow or a more lightweight tool like Prefect, which also offer automatic retries and a notification system that could notify the data engineers of unexpected events when no one is looking at the log. 
@@ -39,7 +93,7 @@ __2. A rainy spell clearly breaks the heat in Hat Yai__:
 
 ## 6) Which parts you used AI tools for
 I used AI to help me complete this assignment in almost every part. Let me break them down how: 
-1. __Ingestion script__: I used AI to help me validate my pipeline workflow that I planned, debug ETL scripts errors, and write the logger helper script. 
+1. __Ingestion script__: I used AI to help me validate my pipeline workflow that I planned, debug ETL scripts errors, write the logger helper script, and improve the pipeline scripts to cover all criteria of assignment instruction. 
 2. __SQL__ : I used AI  to validate whether the sql queries I wrote really satisfy the SQL questions or not. 
 3. __Display__: I used AI for brainstorming and to help me debug the streamlit script. 
 4. __README summary__: I used AI to help formatting the images and grammar checks. 

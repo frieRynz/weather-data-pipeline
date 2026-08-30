@@ -29,6 +29,7 @@ logger.info("Extraction started")
 
 successful_cities = 0
 failed_cities = []
+successful_city_names = []  # manifest: only cities fetched in THIS run
 total_rows_fetched = 0
 
 for city, coordinates in location.items():
@@ -56,6 +57,7 @@ for city, coordinates in location.items():
             json.dump(weather_data, f, indent=2)
             
         logger.info(f"Successfully fetched and saved {city} ({len(weather_data['hourly']['time'])} rows)")
+        successful_city_names.append(city)
         
     except Exception as e:
         logger.error(f"Failed to fetch {city}'s weather data. Error: {e}")
@@ -71,5 +73,19 @@ if failed_cities:
     logger.error(f"{failed_cities} city(s) failed to be extracted")
     
 logger.info(f"Total rows fetched: {total_rows_fetched}")
+
+# Write a run manifest so transform.py only processes raw files from THIS
+# run — prevents stale JSON from a failed city (left by a previous run)
+# from being transformed and loaded anyway.
+manifest_path = os.path.join(raw_data_dir, "_manifest.json")
+manifest = {
+    "run_completed_at": time.strftime("%Y-%m-%dT%H:%M:%S"),
+    "fetched_cities": successful_city_names,
+    "failed_cities": failed_cities,
+}
+with open(manifest_path, "w", encoding="utf-8") as mf:
+    json.dump(manifest, mf, indent=2)
+logger.info(f"Extraction manifest written: {len(successful_city_names)} city(s) succeeded, {len(failed_cities)} failed")
+
 print(f"Extraction complete: {successful_cities} cities, {total_rows_fetched} rows "
       f"({len(failed_cities)} failed). See logs/pipeline.log for details.")

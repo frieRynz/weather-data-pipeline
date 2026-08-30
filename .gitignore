@@ -181,3 +181,5 @@ cython_debug/
 .cursorindexingignore
 
 test.py
+
+app/.streamlit/secrets.toml

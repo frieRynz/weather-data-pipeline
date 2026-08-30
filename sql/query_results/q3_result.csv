@@ -1,0 +1,36 @@
+﻿city_name,day,hour,precipitation_prob
+Bangkok,2026-08-30,16,98
+Bangkok,2026-08-31,16,88
+Bangkok,2026-09-01,18,83
+Bangkok,2026-09-02,16,84
+Bangkok,2026-09-03,17,92
+Bangkok,2026-09-04,17,82
+Bangkok,2026-09-05,19,94
+Chiang Mai,2026-08-30,15,100
+Chiang Mai,2026-08-31,0,100
+Chiang Mai,2026-09-01,15,98
+Chiang Mai,2026-09-02,16,100
+Chiang Mai,2026-09-03,14,97
+Chiang Mai,2026-09-04,14,97
+Chiang Mai,2026-09-05,18,99
+Hat Yai,2026-08-30,16,39
+Hat Yai,2026-08-31,15,70
+Hat Yai,2026-09-01,16,96
+Hat Yai,2026-09-02,16,100
+Hat Yai,2026-09-03,15,85
+Hat Yai,2026-09-04,16,84
+Hat Yai,2026-09-05,19,84
+Khon Kaen,2026-08-30,23,89
+Khon Kaen,2026-08-31,2,95
+Khon Kaen,2026-09-01,14,95
+Khon Kaen,2026-09-02,17,96
+Khon Kaen,2026-09-03,18,94
+Khon Kaen,2026-09-04,13,86
+Khon Kaen,2026-09-05,18,91
+Phuket,2026-08-30,14,71
+Phuket,2026-08-31,13,78
+Phuket,2026-09-01,15,87
+Phuket,2026-09-02,14,95
+Phuket,2026-09-03,13,86
+Phuket,2026-09-04,13,63
+Phuket,2026-09-05,16,75

@@ -3,30 +3,30 @@
     "city_name": "Bangkok",
     "latitude": 13.743409,
     "longitude": 100.495865,
-    "timezone": "GMT"
+    "timezone": "Asia/Bangkok"
   },
   {
     "city_name": "Chiang Mai",
     "latitude": 18.80492,
     "longitude": 99.02655,
-    "timezone": "GMT"
+    "timezone": "Asia/Bangkok"
   },
   {
     "city_name": "Hat Yai",
     "latitude": 6.9947276,
     "longitude": 100.48101,
-    "timezone": "GMT"
+    "timezone": "Asia/Bangkok"
   },
   {
     "city_name": "Khon Kaen",
     "latitude": 16.414762,
     "longitude": 102.84492,
-    "timezone": "GMT"
+    "timezone": "Asia/Bangkok"
   },
   {
     "city_name": "Phuket",
     "latitude": 7.908612,
     "longitude": 98.37031,
-    "timezone": "GMT"
+    "timezone": "Asia/Bangkok"
   }
 ]

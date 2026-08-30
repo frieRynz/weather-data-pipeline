@@ -17,6 +17,7 @@ location = {'Bangkok': [13.7540,100.5014],
 
 params = {
     "hourly": ["temperature_2m", "precipitation_probability"],
+    "timezone" : "Asia/Bangkok"
 }
 
 script_dir = os.path.dirname(os.path.abspath(__file__)) # 1. Get absolute path of the folder containing extract.py 

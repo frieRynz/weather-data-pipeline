@@ -1,6 +1,11 @@
 # Weather-data-pipeline
 <p align="center">
-  <img src="img\Screenshot 2026-08-30 225620.png" alt="Weather pipeline dashboard" width="400" height = "550">
+  <table>
+    <tr>
+      <td width="50%" valign="top"><img src="img/dashboard2_1.png" alt="Weather dashboard — city selector, Thailand map with selected-city zoom, and 7-days average temperature card" width="100%"></td>
+      <td width="50%" valign="top"><img src="img/dashboard2_2.png" alt="Weather dashboard — daily temperature line chart and daily temperature breakdown table" width="100%"></td>
+    </tr>
+  </table>
 </p>
 
 ## Setup & Running the Pipeline

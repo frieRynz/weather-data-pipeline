@@ -100,5 +100,5 @@ __2. A rainy spell clearly breaks the heat in Hat Yai__:
 I used AI to help me complete this assignment in almost every part. Let me break them down how: 
 1. __Ingestion script__: I used AI to help me validate my pipeline workflow that I planned initially, debug ETL scripts errors, write the logger helper script, and improve the pipeline scripts to cover all criteria from the  assignment instruction. 
 2. __SQL__ : I used AI to validate whether the sql queries I wrote really satisfy the SQL questions or not. 
-3. __Display__: I used AI for brainstorming and to help me debug the Streamlit app script. 
+3. __Display__: I used AI for brainstorming, to help me debug and enhance visuals representation of the Streamlit app script. 
 4. __README summary__: I used AI to help formatting the images, checking grammar and constructing the project setup tutorial. 

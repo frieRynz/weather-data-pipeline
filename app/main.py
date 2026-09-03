@@ -101,7 +101,12 @@ with left:
     )
     city = selected
 
-subset = df[df["city"] == city].copy()
+subset = (
+    df[df["city"] == city]
+    .sort_values("day")
+    .tail(7)
+    .copy()
+)
 subset["day"] = subset["day"].astype(str)
 cities_geo = (
     df[["city", "latitude", "longitude"]]
